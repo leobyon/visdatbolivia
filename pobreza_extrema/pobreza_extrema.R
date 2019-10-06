@@ -10,7 +10,7 @@ library(ggrepel)
 #extrema pobreza
 ##################
 
-df.Pob.Pais <- read.csv("./poverty_countries.csv", stringsAsFactors = F) %>%
+df.Pob.Pais <- read.csv("./pobreza_paises.csv", stringsAsFactors = F) %>%
   filter(grepl("bolivia|korea|united states", tolower(CountryName))) %>% 
   select(CountryName, 
          RequestYear, 
@@ -23,7 +23,7 @@ df.Pob.Pais <- read.csv("./poverty_countries.csv", stringsAsFactors = F) %>%
   mutate(Region = ifelse(grepl("korea", tolower(Region)), "Corea del Sur", 
                          ifelse(grepl("united", tolower(Region)), "EEUU", "Bolivia")))
 
-df.Pob.Region <- read.csv("./poverty_regional.csv", stringsAsFactors = F) %>%
+df.Pob.Region <- read.csv("./pobreza_regional.csv", stringsAsFactors = F) %>%
   filter(grepl("latin america|world total", tolower(regionTitle))) %>%
   select(regionTitle, 
          requestYear, 
