@@ -14,7 +14,7 @@ df.Pob.Pais <- read.csv("./pobreza_paises.csv", stringsAsFactors = F) %>%
   filter(grepl("bolivia|korea|united states", tolower(CountryName))) %>% 
   select(CountryName, 
          RequestYear, 
-         HeadCount, 
+         HeadCount,   
          ReqYearPopulation) %>% 
   dplyr::rename(Region = CountryName, 
                 Año = RequestYear, 
