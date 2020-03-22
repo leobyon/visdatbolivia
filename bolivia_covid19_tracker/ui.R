@@ -4,7 +4,7 @@ library(shinydashboard)
 
 
 #Dashboard header 
-header <- dashboardHeader(title = "Bolivia COVID-19",
+header <- dashboardHeader(title = "Bolivia COVID-19 Tracker",
                           tags$li(class = "dropdown", tags$a(HTML(paste(uiOutput("Refresh1"))))))
 
 #Dashboard sidebar
