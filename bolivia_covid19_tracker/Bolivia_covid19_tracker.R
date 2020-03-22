@@ -220,7 +220,7 @@ plot_global <- datos_plot %>%
   annotate(geom = "text", x = 50, y = 25, label = "...cada mes")+
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Caso Número {min_casos_pais}'),
-       #y = "Número de casos (Escala Log 10)",
+       y = "Número de casos (Escala Log 10)",
        title = "Casos de Coronavirus en Bolivia Relativo a otros Paises de Referencia", 
        subtitle = str_glue("Número cumulativo de casos, ",
                            "por número de días desde el caso número {min_casos_pais}\n",
@@ -230,7 +230,6 @@ plot_global <- datos_plot %>%
                           "Inspiración 2: https://blog.datawrapper.de/weekly-chart-coronavirus-growth/ \n",
                           "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
                           "Autor: @leo_byon"))+
-  ylab('')+
   opts()
 
 # plot_global+
@@ -278,7 +277,7 @@ plot_sudam <- datos_plot %>%
   annotate(geom = "text", x = 17, y = 17, label = "...cada mes")+
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Caso Número {min_casos_pais}'),
-       #y = "Número de casos (Escala Log 10)",
+       y = "Número de casos (Escala Log 10)",
        title = "Casos de Coronavirus en Bolivia Relativo a otros Paises en Sudamérica", 
        subtitle = str_glue("Número cumulativo de casos, ",
                            "por número de días desde el caso número {min_casos_pais}\n",
@@ -288,7 +287,6 @@ plot_sudam <- datos_plot %>%
                           "Inspiración 2: https://blog.datawrapper.de/weekly-chart-coronavirus-growth/ \n",
                           "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
                           "Autor: @leo_byon"))+
-  ylab('')+
   opts()
 
 # plot_sudam+
