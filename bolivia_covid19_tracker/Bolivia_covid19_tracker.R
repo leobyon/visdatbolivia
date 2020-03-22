@@ -230,6 +230,7 @@ plot_global <- datos_plot %>%
                           "Inspiración 2: https://blog.datawrapper.de/weekly-chart-coronavirus-growth/ \n",
                           "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
                           "Autor: @leo_byon"))+
+  ylab('')+
   opts()
 
 # plot_global+
@@ -287,6 +288,7 @@ plot_sudam <- datos_plot %>%
                           "Inspiración 2: https://blog.datawrapper.de/weekly-chart-coronavirus-growth/ \n",
                           "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
                           "Autor: @leo_byon"))+
+  ylab('')+
   opts()
 
 # plot_sudam+

@@ -1,0 +1,12 @@
+name: bolivia_covid19_tracker
+title: bolivia_covid19_tracker
+username:
+account: visdatbolivia
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1978703
+bundleId: 2910277
+url: https://visdatbolivia.shinyapps.io/bolivia_covid19_tracker/
+when: 1584912251.88496
+asMultiple: FALSE
+asStatic: FALSE
