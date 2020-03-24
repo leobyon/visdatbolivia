@@ -103,14 +103,14 @@ func_preparar_lineas_ref <- function(df){
 ###############
 
 #urls
-url_confirmados = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Confirmed.csv'
-url_fallecidos = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Deaths.csv'
-url_recuperados = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv'
+url_confirmados = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv'
+url_fallecidos = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv'
+#url_recuperados = 'https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_19-covid-Recovered.csv'
 
 #leer datos
 datos_confirmados <- read_csv(url(url_confirmados))
 datos_fallecidos <- read_csv(url(url_fallecidos))
-datos_recuperados <- read_csv(url(url_recuperados))
+#datos_recuperados <- read_csv(url(url_recuperados))
 
 
 #############################
@@ -148,9 +148,9 @@ total_fallecidos <- datos_fallecidos %>%
   filter(`Country/Region` == "Bolivia") %>%
   pull(.data[[ultima_fecha]])
 
-total_recuperados <- datos_recuperados %>% 
-  filter(`Country/Region` == "Bolivia") %>%
-  pull(.data[[ultima_fecha]])
+# total_recuperados <- datos_recuperados %>% 
+#   filter(`Country/Region` == "Bolivia") %>%
+#   pull(.data[[ultima_fecha]])
 
 
 
@@ -169,7 +169,7 @@ datos_limpio <- datos_confirmados %>%
                         Singapore = 'Singapur',
                         Brazil = 'Brasil')) %>% 
   mutate(Country = if_else(!is.na(`Province/State`) & 
-                     `Province/State`=='Hong Kong', 'Hong Kong', Country)) %>% 
+                             `Province/State`=='Hong Kong', 'Hong Kong', Country)) %>% 
   select(-`Province/State`, -Lat, -Long) %>% 
   group_by(Country) %>% 
   summarize_all(sum) %>% 

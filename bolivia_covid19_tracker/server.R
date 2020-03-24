@@ -20,17 +20,17 @@ server <- function(input, output) {
   
   
   #caja: total recuperados
-  output$value2 <- renderValueBox({
-    
-    valueBox(value = formatC(total_recuperados, format="d", big.mark=','),
-             subtitle = 'Total recuperados',
-             color = 'green')
-    
-  })
+  # output$value2 <- renderValueBox({
+  #   
+  #   valueBox(value = formatC(total_recuperados, format="d", big.mark=','),
+  #            subtitle = 'Total recuperados',
+  #            color = 'green')
+  #   
+  # })
   
   
   #caja: total fallecidos
-  output$value3 <- renderValueBox({
+  output$value2 <- renderValueBox({
     
     valueBox(value = formatC(total_fallecidos, format="d", big.mark=','),
              subtitle = 'Total fallecidos',
