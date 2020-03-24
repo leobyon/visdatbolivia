@@ -40,13 +40,16 @@ func_preparar_datos_plot <- function(df, paises_de_ref){
   datos_plot = df %>% 
     filter(Country %in% c(pais_central, paises_de_ref)) %>%
     group_by(Country) %>%
-    mutate(label = if_else(Count == max(Count), Country, NULL)) %>%
+    mutate(label = if_else(Day == max(Day), Country, NULL)) %>%
     ungroup() %>%
     mutate(Country = factor(Country, levels = rev(paises)))
   
   return(datos_plot)
   
 }
+
+
+
 
 #preparar colores para graficar
 func_preparar_colores <- function(df, paises_de_ref){
@@ -231,9 +234,9 @@ plot_global <- datos_plot %>%
                           "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
                           "Autor: @leo_byon"))+
   opts()
-
-# plot_global+
-#   ggsave("coronavirus_global.png", width = 25, height = 20, units = "cm")
+# 
+#  plot_global+
+#    ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_global.png", width = 25, height = 20, units = "cm")
 
 
 
@@ -288,9 +291,9 @@ plot_sudam <- datos_plot %>%
                           "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
                           "Autor: @leo_byon"))+
   opts()
-
-# plot_sudam+
-#   ggsave("coronavirus_sudam.png", width = 25, height = 20, units = "cm")
+# 
+#  plot_sudam+
+#    ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam.png", width = 25, height = 20, units = "cm")
 
 
 
