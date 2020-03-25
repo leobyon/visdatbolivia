@@ -19,8 +19,8 @@ sidebar <- dashboardSidebar(
 
 #fila de principales indicadores
 frow1 <- fluidRow(
-  valueBoxOutput("value1"),
-  valueBoxOutput("value2")
+  valueBoxOutput("value1", width = 6)
+  ,valueBoxOutput("value2", width = 6)
 )
 
 #fila de graficos
