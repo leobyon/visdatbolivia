@@ -75,7 +75,7 @@ func_doblaje <- function(valor_inicio, tasa_doblaje, tiempo){
 
 func_preparar_lineas_ref <- function(df){
   
-  seq_dias <- seq(0, max(df[["Day"]]) + 1)
+  seq_dias <- seq(0, max(df[["Day"]]) + 10)
   
   datos_ref<- data.frame(cada_dia = sapply(seq_dias, function(x) func_doblaje(valor_inicio = min_casos_pais, tasa_doblaje = 1, tiempo = x )),
                          cada_dos_dias = sapply(seq_dias, function(x) func_doblaje(valor_inicio = min_casos_pais, tasa_doblaje = 2, tiempo = x )),
@@ -127,7 +127,7 @@ ultima_fecha_dmy <- as.character(format(strptime(ultima_fecha, "%m/%d/%y"), "%d/
 #paises
 pais_central <- "Bolivia"
 pais_ref <- c("Corea del Sur", "Italia", "España", "EEUU", "Iran", "Singapur")
-pais_sudam <- c("Argentina", "Brasil", "Chile", "Colombia", "Paraguay", "Peru", "Uruguay", "Venezuela")
+pais_sudam <- c("Argentina", "Brasil", "Chile", "Colombia", "Paraguay", "Peru", "Uruguay", "Venezuela", "Ecuador")
 
 #color
 col_pais_central <- "#D55E00" #rojizo
@@ -206,7 +206,7 @@ plot_global <- datos_plot %>%
   ggplot(aes(Day, Count,  color= Country, group = Country, label = label)) +
   geom_line(data = datos_ref, aes(Day, Count), linetype = "dotted", size = 1, colour = "black")+
   geom_line(size=2) +
-  scale_x_continuous(breaks=seq(0, max(datos_plot$NumDays) + 10, 5), 
+  scale_x_continuous(breaks=seq(0, max(datos_plot$NumDays) + 30, 5), 
                      minor_breaks=NULL) +
   scale_y_log10(labels=scales::comma,
                 minor_breaks=NULL,
@@ -267,17 +267,17 @@ plot_sudam <- datos_plot %>%
                      minor_breaks=NULL) +
   scale_y_log10(labels=scales::comma,
                 minor_breaks=NULL,
-                breaks = c(0, 10, 20, 30, 40, 50, 100, 250, 500, 750, 10^(3:ceiling(log10(max(datos_plot$Count))))),
-                limits = c(10,10^(ceiling(log10(max(datos_plot$Count))) - 0.5)))+
+                breaks = c(0, 10, 20, 30, 40, 50, 100, 250, 500, 1000, 2500, 5000, 7500, 10^(3:ceiling(log10(max(datos_plot$Count)))+1)),
+                limits = c(10,10^(ceiling(log10(max(datos_plot$Count)))+1)))+
   scale_colour_manual(values = color_pal)+
   geom_label_repel(aes(label = label, color = Country),
                    nudge_x = 0.2,
                    nudge_y = 0.1)+
-  annotate(geom = "text", x = 6, y = 1500, label = "Número de casos \nse duplica cada 1 día")+
-  annotate(geom = "text", x = 14, y = 1500, label = "...cada 2 días")+
-  annotate(geom = "text", x = 15, y = 400, label = "...cada 3 días")+
-  annotate(geom = "text", x = 16, y = 55, label = "...cada semana")+
-  annotate(geom = "text", x = 17, y = 17, label = "...cada mes")+
+  annotate(geom = "text", x = 8, y = 80000, label = "Número de casos \nse duplica cada 1 día")+
+  annotate(geom = "text", x = 21, y = 50000, label = "...cada 2 días")+
+  annotate(geom = "text", x = 34, y = 40000, label = "...cada 3 días")+
+  annotate(geom = "text", x = 37, y = 250, label = "...cada semana")+
+  annotate(geom = "text", x = 37, y = 15, label = "...cada mes")+
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Caso Número {min_casos_pais}'),
        y = "Número de casos (Escala Log 10)",
