@@ -6,6 +6,8 @@ library(stringr)
 library(readxl)
 library(RCurl)
 
+library(readr)
+
 
 #tematica personalizada
 opts <- function(base_size = 12, base_family = "sans"){
@@ -122,7 +124,7 @@ df2  <- df %>%
 
 scaleFactor <- 0.05
 
-ggplot(data=df2, aes(x=Day))+
+p <- ggplot(data=df2, aes(x=Day))+
   geom_line(aes(y=ConfirmedCases_logged), col="black", size = 1.5)+
   geom_point(aes(y=StringencyIndex*scaleFactor), col = "red", size = 2)+
   scale_y_continuous(name="Número de Casos (Escala Log10)", 
@@ -140,7 +142,7 @@ ggplot(data=df2, aes(x=Day))+
   theme(axis.text.y.right = element_text(color = "red"),
         axis.title.y.right = element_text(color = "red"))+
   labs(title = "Comparación de la Respuesta del Gobierno de Bolivia vs Cinco Paises según la Cantidad de Casos", 
-       subtitle = str_glue("A. El Indice de Severidad mide el nivel de severidad de la respuesta del gobierno (0-100).\n",
+       subtitle = str_glue("A. El Indice de Severidad mide el nivel de severidad de las intervenciones no farmacológicas del gobierno (0-100).\n",
                            "B. Se observan cuatro tipos de respuestas (no exhaustivas):\n",
                            "     - Proactivo (Corea del Sur, Bolivia)\n",
                            "     - Reactivo (Italia, Brasil)\n",
@@ -154,4 +156,8 @@ ggplot(data=df2, aes(x=Day))+
                           "https://www.bsg.ox.ac.uk/research/research-projects/oxford-covid-19-government-response-tracker \n",
                           "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
                           "Autor: @leo_byon"))
+
+#p +
+#  ggsave("E:/github_projects/visdatbolivia/oxford covid tracker/test.png", width = 25, height = 20, units = "cm")
+  
 
