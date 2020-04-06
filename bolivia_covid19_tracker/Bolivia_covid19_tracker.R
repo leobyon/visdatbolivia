@@ -182,7 +182,7 @@ datos_limpio <- datos_confirmados %>%
   group_by(Country) %>%
   mutate(Day = row_number(),
          NumDays = max(Day)) %>%
-  ungroup() %>%
+  ungroup() %>% 
   select(-Date)
 
 ##########################################
