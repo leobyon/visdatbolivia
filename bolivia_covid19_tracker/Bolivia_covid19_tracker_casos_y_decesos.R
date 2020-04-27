@@ -154,9 +154,12 @@ total_fallecidos <- datos_fallecidos %>%
 
 
 
+#########################################################
+# casos confirmados:
+#########################################################
 
 ########################
-#limpiar datos
+# limpiar datos
 ########################
 
 datos_limpio <- datos_confirmados %>% 
@@ -202,7 +205,7 @@ color_pal <- func_preparar_colores(df = datos_plot,
 datos_ref <- func_preparar_lineas_ref(df = datos_plot)
 
 #grafico bolivia vs paises de referencia
-plot_global <- datos_plot %>%
+plot_global_confirm <- datos_plot %>%
   ggplot(aes(Day, Count,  color= Country, group = Country, label = label)) +
   geom_line(data = datos_ref, aes(Day, Count), linetype = "dotted", size = 1, colour = "black")+
   geom_line(size=2) +
@@ -222,11 +225,11 @@ plot_global <- datos_plot %>%
   annotate(geom = "text", x = 48, y = 2000, label = "...cada semana")+
   annotate(geom = "text", x = 50, y = 25, label = "...cada mes")+
   guides(color = FALSE) +
-  labs(x = str_glue('Número de Días desde el Caso Número {min_casos_pais}'),
-       y = "Número de casos (Escala Log 10)",
-       title = "Casos de Coronavirus en Bolivia Relativo a otros Paises de Referencia", 
-       subtitle = str_glue("Número cumulativo de casos, ",
-                           "por número de días desde el caso número {min_casos_pais}\n",
+  labs(x = str_glue('Número de Días desde el Décimo Caso Confirmado'),
+       y = "Número de Casos Confirmados (Escala Log 10)",
+       title = "Casos Confirmados de Coronavirus en Bolivia Relativo a Paises de Referencia", 
+       subtitle = str_glue("Número cumulativo de casos confirmados, ",
+                           "por número de días desde el décimo caso confirmado\n",
                            "Fecha mas reciente de actualización {ultima_fecha_dmy}"),
        caption = str_glue("Fuente: Johns Hopkins CSSE, https://github.com/CSSEGISandData/COVID-19 \n",
                           "Inspiración 1: FT graphic: John Burn-Murdoch / @jburnmurdoch \n", 
@@ -259,7 +262,7 @@ color_pal <- func_preparar_colores(df = datos_plot,
 datos_ref <- func_preparar_lineas_ref(df = datos_plot)
 
 #grafico bolivia vs paises de sudamerica
-plot_sudam <- datos_plot %>%
+plot_sudam_confirm <- datos_plot %>%
   ggplot(aes(Day, Count,  color= Country, group = Country, label = label)) +
   geom_line(data = datos_ref, aes(Day, Count), linetype = "dotted", size = 1, colour = "black")+
   geom_line(size=2) +
@@ -279,11 +282,103 @@ plot_sudam <- datos_plot %>%
   annotate(geom = "text", x = 37, y = 250, label = "...cada semana")+
   annotate(geom = "text", x = 37, y = 15, label = "...cada mes")+
   guides(color = FALSE) +
-  labs(x = str_glue('Número de Días desde el Caso Número {min_casos_pais}'),
-       y = "Número de casos (Escala Log 10)",
-       title = "Casos de Coronavirus en Bolivia Relativo a otros Paises en Sudamérica", 
-       subtitle = str_glue("Número cumulativo de casos, ",
-                           "por número de días desde el caso número {min_casos_pais}\n",
+  labs(x = str_glue('Número de Días desde el Décimo Caso Confirmado'),
+       y = "Número de Casos Confirmados (Escala Log 10)",
+       title = "Casos Confirmados de Coronavirus en Bolivia Relativo a Paises de Sudamérica", 
+       subtitle = str_glue("Número cumulativo de casos confirmados, ",
+                           "por número de días desde décimo caso confirmado\n",
+                           "Fecha mas reciente de actualización {ultima_fecha_dmy}"),
+       caption = str_glue("Fuente: Johns Hopkins CSSE, https://github.com/CSSEGISandData/COVID-19 \n",
+                          "Inspiración 1: FT graphic: John Burn-Murdoch / @jburnmurdoch \n", 
+                          "Inspiración 2: https://blog.datawrapper.de/weekly-chart-coronavirus-growth/ \n",
+                          "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
+                          "Autor: @leo_byon"))+
+  opts()
+
+#plot_sudam+
+#   ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_20200405.png", width = 25, height = 20, units = "cm")
+
+
+
+
+
+
+#########################################################
+# casos fallecidos:
+#########################################################
+
+########################
+# limpiar datos
+########################
+
+datos_limpio <- datos_fallecidos %>% 
+  rename(Country=`Country/Region`) %>% 
+  mutate(Country=recode(Country, 
+                        `Korea, South`='Corea del Sur',
+                        US='EEUU',
+                        Italy = 'Italia',
+                        Spain = 'España',
+                        Singapore = 'Singapur',
+                        Brazil = 'Brasil')) %>% 
+  mutate(Country = if_else(!is.na(`Province/State`) & 
+                             `Province/State`=='Hong Kong', 'Hong Kong', Country)) %>% 
+  select(-`Province/State`, -Lat, -Long) %>% 
+  group_by(Country) %>% 
+  summarize_all(sum) %>% 
+  filter(.data[[ultima_fecha]] >= min_casos_pais) %>% 
+  pivot_longer(cols = -Country, names_to='Date', values_to='Count') %>% 
+  mutate(Date=mdy(Date)) %>%
+  filter(Count >= min_casos_pais) %>%
+  group_by(Country) %>%
+  arrange(Country, Date) %>%
+  group_by(Country) %>%
+  mutate(Day = row_number(),
+         NumDays = max(Day)) %>%
+  ungroup() %>% 
+  select(-Date)
+
+##########################################
+# bolivia vs paises de referencia
+##########################################
+
+
+#preparar matriz y colores para graficar
+datos_plot <- func_preparar_datos_plot(df = datos_limpio,
+                                       paises_de_ref = pais_ref)
+
+#preparar colores para graficar
+color_pal <- func_preparar_colores(df = datos_plot,
+                                   paises_de_ref = pais_ref)
+
+#preparar matriz para graficar lineas de referencia
+datos_ref <- func_preparar_lineas_ref(df = datos_plot)
+
+#grafico bolivia vs paises de referencia
+plot_global_fallecidos <- datos_plot %>%
+  ggplot(aes(Day, Count,  color= Country, group = Country, label = label)) +
+  geom_line(data = datos_ref, aes(Day, Count), linetype = "dotted", size = 1, colour = "black")+
+  geom_line(size=2) +
+  scale_x_continuous(breaks=seq(0, max(datos_plot$NumDays) + 30, 5), 
+                     minor_breaks=NULL) +
+  scale_y_log10(labels=scales::comma,
+                minor_breaks=NULL,
+                breaks = c(0, 10, 20, 30, 40, 50, 100, 250, 500, 750, 10^(3:ceiling(log10(max(datos_plot$Count))))),
+                limits = c(10,10^(ceiling(log10(max(datos_plot$Count)))+1)))+
+  scale_colour_manual(values = color_pal)+
+  geom_label_repel(aes(label = label, color = Country),
+                   nudge_x = 3,
+                   nudge_y = 0.1)+
+  annotate(geom = "text", x = 10, y = 500000, label = "Número de decesos \nse duplica cada 1 día")+
+  annotate(geom = "text", x = 27, y = 400000, label = "...cada 2 días")+
+  annotate(geom = "text", x = 42, y = 400000, label = "...cada 3 días")+
+  annotate(geom = "text", x = 48, y = 2000, label = "...cada semana")+
+  annotate(geom = "text", x = 50, y = 25, label = "...cada mes")+
+  guides(color = FALSE) +
+  labs(x = str_glue('Número de Días desde el Décimo Deceso'),
+       y = "Número de Decesos (Escala Log 10)",
+       title = "Número de Decesos de Coronavirus en Bolivia Relativo a Paises de Referencia", 
+       subtitle = str_glue("Número cumulativo de decesos, ",
+                           "por número de días desde el décimo deceso\n",
                            "Fecha mas reciente de actualización {ultima_fecha_dmy}"),
        caption = str_glue("Fuente: Johns Hopkins CSSE, https://github.com/CSSEGISandData/COVID-19 \n",
                           "Inspiración 1: FT graphic: John Burn-Murdoch / @jburnmurdoch \n", 
@@ -292,8 +387,65 @@ plot_sudam <- datos_plot %>%
                           "Autor: @leo_byon"))+
   opts()
 # 
-#  plot_sudam+
-#    ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam.png", width = 25, height = 20, units = "cm")
+#  plot_global+
+#    ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_global.png", width = 25, height = 20, units = "cm")
+
+
+
+
+
+##########################################
+# bolivia vs paises de sudamerica
+##########################################
+
+
+#preparar matriz y colores para graficar
+datos_plot <- func_preparar_datos_plot(df = datos_limpio,
+                                       paises_de_ref = pais_sudam)
+
+#preparar colores para graficar
+color_pal <- func_preparar_colores(df = datos_plot,
+                                   paises_de_ref = pais_sudam)
+
+#preparar matriz para graficar lineas de referencia
+datos_ref <- func_preparar_lineas_ref(df = datos_plot)
+
+#grafico bolivia vs paises de sudamerica
+plot_sudam_fallecidos <- datos_plot %>%
+  ggplot(aes(Day, Count,  color= Country, group = Country, label = label)) +
+  geom_line(data = datos_ref, aes(Day, Count), linetype = "dotted", size = 1, colour = "black")+
+  geom_line(size=2) +
+  scale_x_continuous(breaks=seq(0, max(datos_plot$NumDays) + 10, 5), 
+                     minor_breaks=NULL) +
+  scale_y_log10(labels=scales::comma,
+                minor_breaks=NULL,
+                breaks = c(0, 10, 20, 30, 40, 50, 100, 250, 500, 1000, 2500, 5000, 7500, 10^(3:ceiling(log10(max(datos_plot$Count)))+1)),
+                limits = c(10,10^(ceiling(log10(max(datos_plot$Count)))+1)))+
+  scale_colour_manual(values = color_pal)+
+  geom_label_repel(aes(label = label, color = Country),
+                   nudge_x = 0.2,
+                   nudge_y = 0.1)+
+  annotate(geom = "text", x = 8, y = 80000, label = "Número de decesos \nse duplica cada 1 día")+
+  annotate(geom = "text", x = 21, y = 50000, label = "...cada 2 días")+
+  annotate(geom = "text", x = 34, y = 40000, label = "...cada 3 días")+
+  annotate(geom = "text", x = 37, y = 250, label = "...cada semana")+
+  annotate(geom = "text", x = 37, y = 15, label = "...cada mes")+
+  guides(color = FALSE) +
+  labs(x = str_glue('Número de Días desde el Décimo Deceso'),
+       y = "Número de Decesos (Escala Log 10)",
+       title = "Número de Decesos de Coronavirus en Bolivia Relativo a Paises de Sudamérica", 
+       subtitle = str_glue("Número cumulativo de decesos, ",
+                           "por número de días desde el décimo deceso\n",
+                           "Fecha mas reciente de actualización {ultima_fecha_dmy}"),
+       caption = str_glue("Fuente: Johns Hopkins CSSE, https://github.com/CSSEGISandData/COVID-19 \n",
+                          "Inspiración 1: FT graphic: John Burn-Murdoch / @jburnmurdoch \n", 
+                          "Inspiración 2: https://blog.datawrapper.de/weekly-chart-coronavirus-growth/ \n",
+                          "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
+                          "Autor: @leo_byon"))+
+  opts()
+
+#plot_sudam+
+#   ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_20200405.png", width = 25, height = 20, units = "cm")
 
 
 

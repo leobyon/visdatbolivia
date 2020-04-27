@@ -1,13 +1,13 @@
 library(shiny)
 library(shinydashboard)
 
-#Dashboard header carrying the title of the dashboard
-header <- dashboardHeader(title = "Bolivia COVID-19",
+
+
+#Dashboard header 
+header <- dashboardHeader(title = "Bolivia COVID-19 Tracker",
                           tags$li(class = "dropdown", tags$a(HTML(paste(uiOutput("Refresh1"))))))
 
-
-
-#Sidebar content of the dashboard
+#Dashboard sidebar
 sidebar <- dashboardSidebar(
   sidebarMenu(
     menuItem("Bolivia COVID-19 Tracker", tabName = "Principal", icon = icon("dashboard")),
@@ -17,56 +17,32 @@ sidebar <- dashboardSidebar(
              href = "https://twitter.com/leo_byon"))
 )
 
-
+#fila de principales indicadores
 frow1 <- fluidRow(
   valueBoxOutput("value1", width = 6)
   ,valueBoxOutput("value2", width = 6)
 )
 
-
-
+#fila de graficos
 frow2 <- fluidRow(
   
   box(
-    title = "Casos Confirmados en Bolivia Relativo a Paises de Sudamérica",
-    #status = "primary",
-    #solidHeader = TRUE,
-    background = "purple",
-    plotOutput("paisSudamConfirm", height = "600px")
+    title = "Casos de Coronavirus en Bolivia Relativo a otros Paises de Referencia",
+    status = "primary",
+    solidHeader = TRUE,
+    plotOutput("paisRef", height = "600px")
   )
   
   ,box(
-    title = "Decesos en Bolivia Relativo a Paises de Sudamérica",
-    #status = "primary",
-    #solidHeader = TRUE,
-    background = "yellow",
-    plotOutput("paisSudamDeceso", height = "600px")
+    title = "Casos de Coronavirus en Bolivia Relativo a otros Paises en Sudamérica",
+    status = "primary",
+    solidHeader = TRUE,
+    plotOutput("paisSudAm", height = "600px")
   ) 
   
 )
 
 frow3 <- fluidRow(
-  
-  box(
-    title = "Casos Confirmados en Bolivia Relativo a Paises de Referencia",
-    #status = "primary",
-    #solidHeader = TRUE,
-    background = "purple",
-    plotOutput("paisRefConfirm", height = "600px")
-  )
-  
-  ,box(
-    title = "Decesos en Bolivia Relativo a Paises de Referencia",
-    #status = "primary",
-    #solidHeader = TRUE,
-    background = "yellow",
-    plotOutput("paisRefDeceso", height = "600px")
-  ) 
-  
-)
-
-
-frow4 <- fluidRow(
   tabBox(title = '',
          id = 'tabset1', height = '200', width = 12,
          tabPanel('Proposito', 
@@ -77,7 +53,8 @@ frow4 <- fluidRow(
                  "),
          tabPanel('Datos', 
                   'Los datos provienen de Johns Hopkins University Center for Systems Science and Engineering y 
-                  son actualizados una vez al día alrededor de las 23:59 UTC (20:59 en hora de Bolivia)'),
+                  son actualizados una vez al día alrededor de las 23:59 UTC (20:59 en hora de Bolivia). Los datos
+                  de esta página se actualizarán entre las 21:00 y 00:00, hora de Bolivia'),
          tabPanel('Acerca del Autor',
                   'El autor es un ciudadano preocupado y no es un profesional calificado en temas de salud o epidemiología.
                   El autor puede ser contactado por email a visdatbolivia@gmail.com'),
@@ -91,8 +68,9 @@ frow4 <- fluidRow(
 )
 
 
-# combine the two fluid rows to make the body
-body <- dashboardBody(frow1, frow2, frow3, frow4)
+# cuerpo
+body <- dashboardBody(frow1, frow2, frow3)
+
 
 #finalizar
 dashboardPage(title = '', header, sidebar, body, skin='red')

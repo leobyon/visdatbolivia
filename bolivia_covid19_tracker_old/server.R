@@ -1,14 +1,15 @@
-source("Bolivia_covid19_tracker_casos_y_decesos.R")
+source("Bolivia_covid19_tracker.R")
 
-# create the server functions for the dashboard  
+
+# crear funciones de servidor 
 server <- function(input, output) { 
   
-  
+  #ultima fecha de actualizacion
   output$Refresh1 <- renderText({
     toString(paste("Última fecha de actualización: ", format(as.Date(ultima_fecha, format = "%m/%d/%y"), format = "%d/%m/%Y")))
   })
   
-  #creating the valueBoxOutput content
+  #caja: total confirmados
   output$value1 <- renderValueBox({
     valueBox(value = formatC(total_confirmados, format="d", big.mark=','),
              subtitle = 'Total casos confirmados',
@@ -18,7 +19,7 @@ server <- function(input, output) {
   })
   
   
-  # 
+  #caja: total recuperados
   # output$value2 <- renderValueBox({
   #   
   #   valueBox(value = formatC(total_recuperados, format="d", big.mark=','),
@@ -28,38 +29,28 @@ server <- function(input, output) {
   # })
   
   
-  
+  #caja: total fallecidos
   output$value2 <- renderValueBox({
     
     valueBox(value = formatC(total_fallecidos, format="d", big.mark=','),
-             subtitle = 'Total decesos',
+             subtitle = 'Total fallecidos',
              color = 'yellow')
     
   })
   
-  #creating the plotOutput content
-  
-  output$paisRefConfirm <- renderPlot({
-    plot_global_confirm
+  #grafico: bolivia vs ref
+  output$paisRef <- renderPlot({
+    plot_global
   })
   
-  
-  output$paisSudamConfirm <- renderPlot({
-    plot_sudam_confirm
-  })
-  
-  output$paisRefDeceso <- renderPlot({
-    plot_global_fallecidos
-  })
-  
-  
-  output$paisSudamDeceso <- renderPlot({
-    plot_sudam_fallecidos
+  #grafico: bolivia vs sudam
+  output$paisSudAm <- renderPlot({
+    plot_sudam
   })
   
   
   
-  
+  #texto
   output$tabset1 <- renderText({
     
     input$tabset1
