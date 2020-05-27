@@ -5,8 +5,9 @@ account: visdatbolivia
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1978703
-bundleId: 3069531
+bundleId: 3196034
 url: https://visdatbolivia.shinyapps.io/bolivia_covid19_tracker/
-when: 1587953916.6242
+when: 1590592455.11547
 asMultiple: FALSE
 asStatic: FALSE
+ignoredFiles: coronavirus_bolivia_dpto_confirmados.png|coronavirus_bolivia_dpto_confirmados_doblaje.png|coronavirus_bolivia_dpto_fallecidos.png|coronavirus_bolivia_dpto_fallecidos_doblaje.png|coronavirus_global_confirmados.png|coronavirus_global_fallecidos.png|coronavirus_sudam_confirmados.png|coronavirus_sudam_confirmados_doblaje.png|coronavirus_sudam_fallecidos.png|coronavirus_sudam_fallecidos_doblaje.png

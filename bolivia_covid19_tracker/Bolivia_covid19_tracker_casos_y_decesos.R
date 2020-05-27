@@ -1,3 +1,4 @@
+
 library(readr)
 library(tidyverse)
 library(lubridate)
@@ -5,6 +6,8 @@ library(reshape2)
 library(ggrepel)
 library(shiny)
 library(shinydashboard)
+
+library(gt)
 
 
 
@@ -97,6 +100,45 @@ func_preparar_lineas_ref <- function(df){
 }
 
 
+#calcular tiempo doblaje
+func_calcular_tiempo_doblaje <- function(df, intervalo_dias, ultima_semana){
+  
+  
+  
+  cum_final <- df$Count[nrow(df)- intervalo_dias * (ultima_semana - 1)]
+  cum_inicio <- df$Count[nrow(df)-intervalo_dias * ultima_semana]
+  
+  if (length(cum_final) != 1 | length(cum_inicio) != 1){
+    return(NA)
+  } else {
+    tiempo_doblaje_en_dias <- (intervalo_dias*log(2))/(log(cum_final/cum_inicio))
+    
+    if (length(tiempo_doblaje_en_dias) > 1 | is.infinite(tiempo_doblaje_en_dias[1])){
+      return(NA)
+    } else {
+      return(round(tiempo_doblaje_en_dias, 0))
+    }
+    
+  }
+  
+}
+
+# func_calcular_tiempo_doblaje <- function(df, intervalo_dias, ultima_semana){
+#   
+#   
+#   cum_final <- df$Count[nrow(df)- intervalo_dias * (ultima_semana - 1)]
+#   cum_inicio <- df$Count[nrow(df)-intervalo_dias * ultima_semana]
+#   
+#   tiempo_doblaje_en_dias <- (intervalo_dias*log(2))/(log(cum_final/cum_inicio))
+#   
+#   if (length(tiempo_doblaje_en_dias) > 1 | is.infinite(tiempo_doblaje_en_dias[1])){
+#     return(NA)
+#   } else {
+#     return(round(tiempo_doblaje_en_dias, 0))
+#   }
+#   
+#   
+# }
 
 ###############
 #importar datos
@@ -227,20 +269,20 @@ plot_global_confirm <- datos_plot %>%
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Décimo Caso Confirmado'),
        y = "Número de Casos Confirmados (Escala Log 10)",
-       title = "Casos Confirmados de Coronavirus en Bolivia Relativo a Paises de Referencia", 
+       title = "Casos Confirmados de Covid-19 en Bolivia Relativo a Paises de Referencia", 
        subtitle = str_glue("Número cumulativo de casos confirmados, ",
                            "por número de días desde el décimo caso confirmado\n",
                            "Fecha mas reciente de actualización {ultima_fecha_dmy}"),
        caption = str_glue("Fuente: Johns Hopkins CSSE, https://github.com/CSSEGISandData/COVID-19 \n",
                           "Inspiración 1: FT graphic: John Burn-Murdoch / @jburnmurdoch \n", 
                           "Inspiración 2: https://blog.datawrapper.de/weekly-chart-coronavirus-growth/ \n",
-                          "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
+                          "Código Fuente: https://github.com/leobyon/visdatbolivia \n",
                           "Autor: @leo_byon"))+
   opts()
-# 
-#  plot_global+
-#    ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_global.png", width = 25, height = 20, units = "cm")
 
+# plot_global_confirm+
+#    ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_global_confirmados.png", width = 25, height = 20, units = "cm")
+# 
 
 
 
@@ -284,19 +326,111 @@ plot_sudam_confirm <- datos_plot %>%
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Décimo Caso Confirmado'),
        y = "Número de Casos Confirmados (Escala Log 10)",
-       title = "Casos Confirmados de Coronavirus en Bolivia Relativo a Paises de Sudamérica", 
+       title = "Casos Confirmados de Covid-19 en Bolivia Relativo a Paises de Sudamérica", 
        subtitle = str_glue("Número cumulativo de casos confirmados, ",
                            "por número de días desde décimo caso confirmado\n",
                            "Fecha mas reciente de actualización {ultima_fecha_dmy}"),
        caption = str_glue("Fuente: Johns Hopkins CSSE, https://github.com/CSSEGISandData/COVID-19 \n",
                           "Inspiración 1: FT graphic: John Burn-Murdoch / @jburnmurdoch \n", 
                           "Inspiración 2: https://blog.datawrapper.de/weekly-chart-coronavirus-growth/ \n",
-                          "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
+                          "Código Fuente: https://github.com/leobyon/visdatbolivia \n",
                           "Autor: @leo_byon"))+
   opts()
 
-#plot_sudam+
-#   ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_20200405.png", width = 25, height = 20, units = "cm")
+# plot_sudam_confirm+
+#   ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_confirmados.png", width = 25, height = 20, units = "cm")
+
+
+
+
+
+#########################################################
+# casos confirmados : tasa doblaje sudam:
+#########################################################
+
+
+
+
+
+df_tiempo_dupl <- plyr::ldply(as.character(unique(datos_plot$Country)), function(x){
+  
+  sub <- datos_plot %>% filter(Country == x) 
+  
+  semana_menos_uno <- func_calcular_tiempo_doblaje(df = sub, intervalo_dias = 7, ultima_semana = 1)
+  semana_menos_dos <- func_calcular_tiempo_doblaje(df = sub, intervalo_dias = 7, ultima_semana = 2)
+  semana_menos_tres <- func_calcular_tiempo_doblaje(df = sub, intervalo_dias = 7, ultima_semana = 3)
+  semana_menos_cuatro <- func_calcular_tiempo_doblaje(df = sub, intervalo_dias = 7, ultima_semana = 4)
+  
+  return(c(x, semana_menos_uno, semana_menos_dos, semana_menos_tres, semana_menos_cuatro))
+  
+}) %>%
+  `colnames<-`(c("País", "Última Semana", "Penúltima Semana", "Antepenúltima Semana", "Trasantepenúltima Semana")) %>%
+  mutate_at(vars(contains("Semana")), ~paste(., "días")) %>%
+  na_if(., "NA días") %>%
+  replace(is.na(.), "NA")
+
+tb_sudam_doblaje_confirm <- df_tiempo_dupl %>%
+  gt() %>%
+  tab_header(
+    title = "Ritmo de Crecimiento de Casos Confirmados de Covid-19 en Bolivia Relativo a Paises de Sudamérica",
+    subtitle = "A base de las últimas cuatro semanas, la tabla muestra el ritmo de crecimiento 
+    (cuantificado como tiempo de duplicación en número de días) de casos confirmados por intervalos semanales. 
+    Es decir, muestra el ritmo de     crecimiento de la semana pasada, la semana anterior a la semana pasada 
+    y asi sucesivamente hasta cubrir los últimos cuatro periodos semanales."
+  ) %>%
+  opt_align_table_header(align = "left") %>%
+  data_color(
+    columns = vars("Última Semana"),
+    colors = c("snow4")
+  ) %>%
+  data_color(
+    columns = vars("Penúltima Semana"),
+    colors = c("snow3")
+  ) %>%
+  data_color(
+    columns = vars("Antepenúltima Semana"),
+    colors = c("snow2")
+  ) %>%
+  data_color(
+    columns = vars("Trasantepenúltima Semana"),
+    colors = c("snow1")
+  ) %>%
+  cols_align(align = "center") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("top", "bottom"),
+      color = "red",
+      weight = px(1.5),
+      style = "solid"
+    ),
+    locations = cells_body(
+      rows = (País == "Bolivia")
+    )) %>%
+  tab_source_note(
+    source_note = str_glue("Fecha mas reciente de actualización: {ultima_fecha_dmy}")
+  ) %>%
+  tab_source_note(
+    source_note = "Fuente: Johns Hopkins CSSE, https://github.com/CSSEGISandData/COVID-19"
+  ) %>%
+  tab_source_note(
+    source_note = "Código Fuente: https://github.com/leobyon/visdatbolivia \n"
+  ) %>%
+  tab_source_note(
+    source_note = "Autor: @leo_byon"
+  ) %>%
+  tab_options(
+    source_notes.font.size = "10px"
+  )
+
+# gtsave(tb_sudam_doblaje_confirm, 
+#        "E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_confirmados_doblaje.png")
+# 
+
+
+
+
+
+
 
 
 
@@ -376,20 +510,20 @@ plot_global_fallecidos <- datos_plot %>%
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Décimo Deceso'),
        y = "Número de Decesos (Escala Log 10)",
-       title = "Número de Decesos de Coronavirus en Bolivia Relativo a Paises de Referencia", 
+       title = "Número de Decesos por Covid-19 en Bolivia Relativo a Paises de Referencia", 
        subtitle = str_glue("Número cumulativo de decesos, ",
                            "por número de días desde el décimo deceso\n",
                            "Fecha mas reciente de actualización {ultima_fecha_dmy}"),
        caption = str_glue("Fuente: Johns Hopkins CSSE, https://github.com/CSSEGISandData/COVID-19 \n",
                           "Inspiración 1: FT graphic: John Burn-Murdoch / @jburnmurdoch \n", 
                           "Inspiración 2: https://blog.datawrapper.de/weekly-chart-coronavirus-growth/ \n",
-                          "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
+                          "Código Fuente: https://github.com/leobyon/visdatbolivia \n",
                           "Autor: @leo_byon"))+
   opts()
-# 
-#  plot_global+
-#    ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_global.png", width = 25, height = 20, units = "cm")
 
+ # plot_global_fallecidos+
+ #   ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_global_fallecidos.png", width = 25, height = 20, units = "cm")
+ # 
 
 
 
@@ -433,21 +567,108 @@ plot_sudam_fallecidos <- datos_plot %>%
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Décimo Deceso'),
        y = "Número de Decesos (Escala Log 10)",
-       title = "Número de Decesos de Coronavirus en Bolivia Relativo a Paises de Sudamérica", 
+       title = "Número de Decesos por Covid-19 en Bolivia Relativo a Paises de Sudamérica", 
        subtitle = str_glue("Número cumulativo de decesos, ",
                            "por número de días desde el décimo deceso\n",
                            "Fecha mas reciente de actualización {ultima_fecha_dmy}"),
        caption = str_glue("Fuente: Johns Hopkins CSSE, https://github.com/CSSEGISandData/COVID-19 \n",
                           "Inspiración 1: FT graphic: John Burn-Murdoch / @jburnmurdoch \n", 
                           "Inspiración 2: https://blog.datawrapper.de/weekly-chart-coronavirus-growth/ \n",
-                          "Código Fuente: https://github.com/visdatbolivia/visdatbolivia \n",
+                          "Código Fuente: https://github.com/leobyon/visdatbolivia \n",
                           "Autor: @leo_byon"))+
   opts()
 
-#plot_sudam+
-#   ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_20200405.png", width = 25, height = 20, units = "cm")
+# plot_sudam_fallecidos+
+#   ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_fallecidos.png", width = 25, height = 20, units = "cm")
 
 
 
+#########################################################
+# decesos : tasa doblaje nivel sudam
+#########################################################
 
+df_tiempo_dupl <- plyr::ldply(as.character(unique(datos_plot$Country)), function(x){
+  
+  sub <- datos_plot %>% filter(Country == x) 
+  
+  semana_menos_uno <- func_calcular_tiempo_doblaje(df = sub, intervalo_dias = 7, ultima_semana = 1)
+  semana_menos_dos <- func_calcular_tiempo_doblaje(df = sub, intervalo_dias = 7, ultima_semana = 2)
+  semana_menos_tres <- func_calcular_tiempo_doblaje(df = sub, intervalo_dias = 7, ultima_semana = 3)
+  semana_menos_cuatro <- func_calcular_tiempo_doblaje(df = sub, intervalo_dias = 7, ultima_semana = 4)
+  
+  return(c(x, semana_menos_uno, semana_menos_dos, semana_menos_tres, semana_menos_cuatro))
+  
+}) %>%
+  `colnames<-`(c("País", "Última Semana", "Penúltima Semana", "Antepenúltima Semana", "Trasantepenúltima Semana")) %>%
+  mutate_at(vars(contains("Semana")), ~paste(., "días")) %>%
+  na_if(., "NA días") %>%
+  replace(is.na(.), "NA")
+
+
+
+tb_sudam_doblaje_fallecidos <- df_tiempo_dupl %>%
+  gt() %>%
+  tab_header(
+    title = "Ritmo de Crecimiento de Decesos por Covid-19 en Bolivia Relativo a Paises de Sudamérica",
+    subtitle = "A base de las últimas cuatro semanas, la tabla muestra el ritmo de crecimiento 
+    (cuantificado como tiempo de duplicación en número de días) de casos confirmados por intervalos semanales. 
+    Es decir, muestra el ritmo de     crecimiento de la semana pasada, la semana anterior a la semana pasada 
+    y asi sucesivamente hasta cubrir los últimos cuatro periodos semanales."
+  ) %>%
+  opt_align_table_header(align = "left") %>%
+  data_color(
+    columns = vars("Última Semana"),
+    colors = c("snow4")
+  ) %>%
+  data_color(
+    columns = vars("Penúltima Semana"),
+    colors = c("snow3")
+  ) %>%
+  data_color(
+    columns = vars("Antepenúltima Semana"),
+    colors = c("snow2")
+  ) %>%
+  data_color(
+    columns = vars("Trasantepenúltima Semana"),
+    colors = c("snow1")
+  ) %>%
+  cols_align(align = "center") %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("top", "bottom"),
+      color = "red",
+      weight = px(1.5),
+      style = "solid"
+    ),
+    locations = cells_body(
+      rows = (País == "Bolivia")
+    )) %>%
+  tab_source_note(
+    source_note = str_glue("Fecha mas reciente de actualización: {ultima_fecha_dmy}")
+  ) %>%
+  tab_source_note(
+    source_note = "NA: En el interval semanal correspondiente, no existe datos o no hubo incremento de nuevos casos confirmados"
+  ) %>%
+  tab_source_note(
+    source_note = "Notas de cómputo: El periodo de análisis por dpto es a partir del décimo caso confirmado 
+    Por tanto, dptos que no cumplen este criterio son excluidos y para los que cumplen, 
+    el periodo analizado puede ser menor al periodo total desde su primer caso confirmado."
+  ) %>%
+  tab_source_note(
+    source_note = "Fuente: Johns Hopkins CSSE, https://github.com/CSSEGISandData/COVID-19"
+  ) %>%
+  tab_source_note(
+    source_note = "Código Fuente: https://github.com/leobyon/visdatbolivia \n"
+  ) %>%
+  tab_source_note(
+    source_note = "Autor: @leo_byon"
+  ) %>%
+  tab_options(
+    source_notes.font.size = "10px"
+  )
+
+
+
+# gtsave(tb_sudam_doblaje_fallecidos, 
+#        "E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_fallecidos_doblaje.png")
 

@@ -1,6 +1,15 @@
 library(shiny)
 library(shinydashboard)
 
+library(readr)
+library(tidyverse)
+library(lubridate)
+library(reshape2)
+library(ggrepel)
+
+library(RJSONIO)
+library(gt)
+
 #Dashboard header carrying the title of the dashboard
 header <- dashboardHeader(title = "Bolivia COVID-19",
                           tags$li(class = "dropdown", tags$a(HTML(paste(uiOutput("Refresh1"))))))
@@ -24,11 +33,56 @@ frow1 <- fluidRow(
 )
 
 
-
 frow2 <- fluidRow(
   
   box(
-    title = "Casos Confirmados en Bolivia Relativo a Paises de Sudamérica",
+    #title = "Casos Confirmados en Bolivia a Nivel Departamental",
+    #status = "primary",
+    #solidHeader = TRUE,
+    background = "purple",
+    plotOutput("boliviaDptoConfirm", height = "600px")
+  )
+  
+  ,box(
+    #title = "Decesos en Bolivia a Nivel Departamental",
+    #status = "primary",
+    #solidHeader = TRUE,
+    background = "yellow",
+    plotOutput("boliviaDptoDeceso", height = "600px")
+  ) 
+  
+)
+
+
+
+
+frow2.5 <- fluidRow(
+  
+  
+  box(
+    #title = "Ritmo de Crecimiento de Casos Confirmados en Bolivia a Nivel Departamental",
+    #status = "primary",
+    #solidHeader = TRUE,
+    background = "purple",
+    gt_output(outputId = "tb_dpto_doblaje_confir")
+  )
+  
+  ,box(
+    #title = "Ritmo de Crecimiento de Decesos por Covid-19 en Bolivia a Nivel Departamental",
+    #status = "primary",
+    #solidHeader = TRUE,
+    background = "yellow",
+    gt_output(outputId = "tb_dpto_doblaje_fallecidos")
+  ) 
+  
+  
+  
+)
+
+frow3 <- fluidRow(
+  
+  box(
+    #title = "Casos Confirmados en Bolivia Relativo a Paises de Sudamérica",
     #status = "primary",
     #solidHeader = TRUE,
     background = "purple",
@@ -36,7 +90,7 @@ frow2 <- fluidRow(
   )
   
   ,box(
-    title = "Decesos en Bolivia Relativo a Paises de Sudamérica",
+    #title = "Decesos en Bolivia Relativo a Paises de Sudamérica",
     #status = "primary",
     #solidHeader = TRUE,
     background = "yellow",
@@ -45,10 +99,32 @@ frow2 <- fluidRow(
   
 )
 
-frow3 <- fluidRow(
+
+
+frow3.5 <- fluidRow(
   
   box(
-    title = "Casos Confirmados en Bolivia Relativo a Paises de Referencia",
+    #title = "Ritmo de Crecimiento de Casos Confirmados de Covid-19 en Bolivia Relativo a Paises de Sudamérica",
+    #status = "primary",
+    #solidHeader = TRUE,
+    background = "purple",
+    gt_output(outputId = "tb_sudam_doblaje_confirm")
+  )
+  
+  ,box(
+    #title = "Ritmo de Crecimiento de Decesos por Covid-19 en Bolivia Relativo a Paises de Sudamérica",
+    #status = "primary",
+    #solidHeader = TRUE,
+    background = "yellow",
+    gt_output(outputId = "tb_sudam_doblaje_fallecidos")
+  ) 
+  
+)
+
+frow4 <- fluidRow(
+  
+  box(
+    #title = "Casos Confirmados en Bolivia Relativo a Paises de Referencia",
     #status = "primary",
     #solidHeader = TRUE,
     background = "purple",
@@ -56,7 +132,7 @@ frow3 <- fluidRow(
   )
   
   ,box(
-    title = "Decesos en Bolivia Relativo a Paises de Referencia",
+    #title = "Decesos en Bolivia Relativo a Paises de Referencia",
     #status = "primary",
     #solidHeader = TRUE,
     background = "yellow",
@@ -66,7 +142,7 @@ frow3 <- fluidRow(
 )
 
 
-frow4 <- fluidRow(
+frow5 <- fluidRow(
   tabBox(title = '',
          id = 'tabset1', height = '200', width = 12,
          tabPanel('Proposito', 
@@ -92,8 +168,9 @@ frow4 <- fluidRow(
 
 
 # combine the two fluid rows to make the body
-body <- dashboardBody(frow1, frow2, frow3, frow4)
+body <- dashboardBody(frow1, frow2, frow2.5, frow3, frow3.5, frow4, frow5)
 
-#finalizar
-dashboardPage(title = '', header, sidebar, body, skin='red')
+#completing the ui part with dashboardPage
+ui <- dashboardPage(title = 'Bolivia COVID-19 Tracker', header, sidebar, body, skin='red')
+
 
