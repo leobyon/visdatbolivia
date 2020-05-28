@@ -80,9 +80,8 @@ func_preparar_lineas_ref <- function(df){
 
 
 #calcular tiempo doblaje
-func_calcular_tiempo_doblaje <- function(df, intervalo_dias, ultima_semana){
-  
 
+func_calcular_tiempo_doblaje <- function(df, intervalo_dias, ultima_semana){
   
   cum_final <- df$Count[nrow(df)- intervalo_dias * (ultima_semana - 1)]
   cum_inicio <- df$Count[nrow(df)-intervalo_dias * ultima_semana]
@@ -90,34 +89,40 @@ func_calcular_tiempo_doblaje <- function(df, intervalo_dias, ultima_semana){
   if (length(cum_final) != 1 | length(cum_inicio) != 1){
     return(NA)
   } else {
-    tiempo_doblaje_en_dias <- (intervalo_dias*log(2))/(log(cum_final/cum_inicio))
     
-    if (length(tiempo_doblaje_en_dias) > 1 | is.infinite(tiempo_doblaje_en_dias[1])){
-      return(NA)
+    if (cum_final == cum_inicio){
+      return("Sin Cambio")
     } else {
+      
+      tiempo_doblaje_en_dias <- (intervalo_dias*log(2))/(log(cum_final/cum_inicio))
       return(round(tiempo_doblaje_en_dias, 0))
+      
     }
-    
   }
-  
 }
-
+# 
 # func_calcular_tiempo_doblaje <- function(df, intervalo_dias, ultima_semana){
 #   
+# 
 #   
 #   cum_final <- df$Count[nrow(df)- intervalo_dias * (ultima_semana - 1)]
 #   cum_inicio <- df$Count[nrow(df)-intervalo_dias * ultima_semana]
 #   
-#   tiempo_doblaje_en_dias <- (intervalo_dias*log(2))/(log(cum_final/cum_inicio))
-#   
-#   if (length(tiempo_doblaje_en_dias) > 1 | is.infinite(tiempo_doblaje_en_dias[1])){
+#   if (length(cum_final) != 1 | length(cum_inicio) != 1){
 #     return(NA)
 #   } else {
-#     return(round(tiempo_doblaje_en_dias, 0))
+#     tiempo_doblaje_en_dias <- (intervalo_dias*log(2))/(log(cum_final/cum_inicio))
+#     
+#     if (length(tiempo_doblaje_en_dias) > 1 | is.infinite(tiempo_doblaje_en_dias[1])){
+#       return(NA)
+#     } else {
+#       return(round(tiempo_doblaje_en_dias, 0))
+#     }
+#     
 #   }
 #   
-#   
 # }
+
 
 
 ###############
@@ -232,6 +237,7 @@ plot_dpto_confirm <- datos_plot %>%
 
 df_tiempo_dupl <- plyr::ldply(as.character(unique(datos_plot$Dpto)), function(x){
   
+  
   sub <- datos_plot %>% filter(Dpto == x) 
   
   semana_menos_uno <- func_calcular_tiempo_doblaje(df = sub, intervalo_dias = 7, ultima_semana = 1)
@@ -246,9 +252,10 @@ df_tiempo_dupl <- plyr::ldply(as.character(unique(datos_plot$Dpto)), function(x)
   `colnames<-`(c("Dpto", "Última Semana", "Penúltima Semana", "Antepenúltima Semana", "Trasantepenúltima Semana")) %>%
   mutate_at(vars(contains("Semana")), ~paste(., "días")) %>%
   na_if(., "NA días") %>%
-  replace(is.na(.), "NA") 
-  #mutate(Dpto=recode(Dpto, 
-  #                      Potosí='Potosi')) 
+  replace(is.na(.), "NA") %>%
+  replace(. == "Sin Cambio días", "Sin Cambio")
+
+
 
 tb_dpto_doblaje_confir <- df_tiempo_dupl %>%
   gt() %>%
@@ -281,7 +288,10 @@ tb_dpto_doblaje_confir <- df_tiempo_dupl %>%
     source_note = str_glue("Fecha mas reciente de actualización: {ultima_fecha_dmy}")
   ) %>%
   tab_source_note(
-    source_note = "NA: En el interval semanal correspondiente, no existe datos o no hubo incremento de nuevos casos confirmados"
+    source_note = "NA: En el intervalo semanal correspondiente, no hay suficientes datos para realizar el cómputo"
+  ) %>%
+  tab_source_note(
+    source_note = "Sin Cambio: En el intervalo semanal correspondiente, no hubo cambio en el número de nuevos casos confirmados"
   ) %>%
   tab_source_note(
     source_note = "Notas de cómputo: El periodo de análisis por dpto es a partir del décimo caso confirmado 
@@ -438,7 +448,10 @@ tb_dpto_doblaje_fallecidos <- df_tiempo_dupl %>%
     source_note = str_glue("Fecha mas reciente de actualización: {ultima_fecha_dmy}")
   ) %>%
   tab_source_note(
-    source_note = "NA: En el interval semanal correspondiente, no existe datos o no hubo incremento de nuevos casos confirmados"
+    source_note = "NA: En el intervalo semanal correspondiente, no hay suficientes datos para realizar el cómputo"
+  ) %>%
+  tab_source_note(
+    source_note = "Sin Cambio: En el intervalo semanal correspondiente, no hubo cambio en el número de nuevos decesos"
   ) %>%
   tab_source_note(
     source_note = "Notas de cómputo: El periodo de análisis por dpto es a partir del décimo deceso. 
