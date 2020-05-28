@@ -259,7 +259,7 @@ plot_global_confirm <- datos_plot %>%
   geom_line(size=2) +
   scale_x_continuous(breaks=seq(0, max(datos_plot$NumDays) + 30, 5), 
                      minor_breaks=NULL) +
-  scale_y_log10(labels=scales::comma,
+  scale_y_log10(labels=scales::comma_format(accuracy = 1),
                 minor_breaks=NULL,
                 breaks = c(0, 10, 20, 30, 40, 50, 100, 250, 500, 750, 10^(3:ceiling(log10(max(datos_plot$Count))))),
                 limits = c(10,10^(ceiling(log10(max(datos_plot$Count)))+1)))+
@@ -267,11 +267,11 @@ plot_global_confirm <- datos_plot %>%
   geom_label_repel(aes(label = label, color = Country),
                    nudge_x = 3,
                    nudge_y = 0.1)+
-  annotate(geom = "text", x = 10, y = 500000, label = "Número de casos \nse duplica cada 1 día")+
-  annotate(geom = "text", x = 27, y = 400000, label = "...cada 2 días")+
-  annotate(geom = "text", x = 42, y = 400000, label = "...cada 3 días")+
-  annotate(geom = "text", x = 48, y = 2000, label = "...cada semana")+
-  annotate(geom = "text", x = 50, y = 25, label = "...cada mes")+
+  annotate(geom = "text", x = 10, y = 10000000, label = "Número de casos \nse duplica cada 1 día")+
+  annotate(geom = "text", x = 35, y = 10000000, label = "...cada 2 días")+
+  annotate(geom = "text", x = 55, y = 10000000, label = "...cada 3 días")+
+  annotate(geom = "text", x = 120, y = 1000000, label = "...cada semana")+
+  annotate(geom = "text", x = 120, y = 100, label = "...cada mes")+
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Décimo Caso Confirmado'),
        y = "Número de Casos Confirmados (Escala Log 10)",
@@ -316,7 +316,7 @@ plot_sudam_confirm <- datos_plot %>%
   geom_line(size=2) +
   scale_x_continuous(breaks=seq(0, max(datos_plot$NumDays) + 10, 5), 
                      minor_breaks=NULL) +
-  scale_y_log10(labels=scales::comma,
+  scale_y_log10(labels=scales::comma_format(accuracy = 1),
                 minor_breaks=NULL,
                 breaks = c(0, 10, 20, 30, 40, 50, 100, 250, 500, 1000, 2500, 5000, 7500, 10^(3:ceiling(log10(max(datos_plot$Count)))+1)),
                 limits = c(10,10^(ceiling(log10(max(datos_plot$Count)))+1)))+
@@ -324,11 +324,11 @@ plot_sudam_confirm <- datos_plot %>%
   geom_label_repel(aes(label = label, color = Country),
                    nudge_x = 0.2,
                    nudge_y = 0.1)+
-  annotate(geom = "text", x = 8, y = 80000, label = "Número de casos \nse duplica cada 1 día")+
-  annotate(geom = "text", x = 21, y = 50000, label = "...cada 2 días")+
-  annotate(geom = "text", x = 34, y = 40000, label = "...cada 3 días")+
-  annotate(geom = "text", x = 37, y = 250, label = "...cada semana")+
-  annotate(geom = "text", x = 37, y = 15, label = "...cada mes")+
+  annotate(geom = "text", x = 8, y = 1000000, label = "Número de casos \nse duplica cada 1 día")+
+  annotate(geom = "text", x = 30, y = 1000000, label = "...cada 2 días")+
+  annotate(geom = "text", x = 45, y = 1000000, label = "...cada 3 días")+
+  annotate(geom = "text", x = 25, y = 50, label = "...cada semana")+
+  annotate(geom = "text", x = 90, y = 50, label = "...cada mes")+
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Décimo Caso Confirmado'),
        y = "Número de Casos Confirmados (Escala Log 10)",
@@ -509,7 +509,7 @@ plot_global_fallecidos <- datos_plot %>%
   geom_line(size=2) +
   scale_x_continuous(breaks=seq(0, max(datos_plot$NumDays) + 30, 5), 
                      minor_breaks=NULL) +
-  scale_y_log10(labels=scales::comma,
+  scale_y_log10(labels=scales::comma_format(accuracy = 1),
                 minor_breaks=NULL,
                 breaks = c(0, 10, 20, 30, 40, 50, 100, 250, 500, 750, 10^(3:ceiling(log10(max(datos_plot$Count))))),
                 limits = c(10,10^(ceiling(log10(max(datos_plot$Count)))+1)))+
@@ -520,8 +520,8 @@ plot_global_fallecidos <- datos_plot %>%
   annotate(geom = "text", x = 10, y = 500000, label = "Número de decesos \nse duplica cada 1 día")+
   annotate(geom = "text", x = 27, y = 400000, label = "...cada 2 días")+
   annotate(geom = "text", x = 42, y = 400000, label = "...cada 3 días")+
-  annotate(geom = "text", x = 48, y = 2000, label = "...cada semana")+
-  annotate(geom = "text", x = 50, y = 25, label = "...cada mes")+
+  annotate(geom = "text", x = 100, y = 100000, label = "...cada semana")+
+  annotate(geom = "text", x = 100, y = 50, label = "...cada mes")+
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Décimo Deceso'),
        y = "Número de Decesos (Escala Log 10)",
@@ -566,7 +566,7 @@ plot_sudam_fallecidos <- datos_plot %>%
   geom_line(size=2) +
   scale_x_continuous(breaks=seq(0, max(datos_plot$NumDays) + 10, 5), 
                      minor_breaks=NULL) +
-  scale_y_log10(labels=scales::comma,
+  scale_y_log10(labels=scales::comma_format(accuracy = 1),
                 minor_breaks=NULL,
                 breaks = c(0, 10, 20, 30, 40, 50, 100, 250, 500, 1000, 2500, 5000, 7500, 10^(3:ceiling(log10(max(datos_plot$Count)))+1)),
                 limits = c(10,10^(ceiling(log10(max(datos_plot$Count)))+1)))+
@@ -577,8 +577,8 @@ plot_sudam_fallecidos <- datos_plot %>%
   annotate(geom = "text", x = 8, y = 80000, label = "Número de decesos \nse duplica cada 1 día")+
   annotate(geom = "text", x = 21, y = 50000, label = "...cada 2 días")+
   annotate(geom = "text", x = 34, y = 40000, label = "...cada 3 días")+
-  annotate(geom = "text", x = 37, y = 250, label = "...cada semana")+
-  annotate(geom = "text", x = 37, y = 15, label = "...cada mes")+
+  annotate(geom = "text", x = 75, y = 10000, label = "...cada semana")+
+  annotate(geom = "text", x = 75, y = 30, label = "...cada mes")+
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Décimo Deceso'),
        y = "Número de Decesos (Escala Log 10)",

@@ -158,10 +158,12 @@ palette <- c("#D69C5E", "#DC7099", "#A090DC", "#D5C1D0", "#77E099", "#BA53DB", "
 # limpiar datos
 ########################
 
+
 df <- plyr::ldply(js$confirmados, function(x) x$dep) %>%
-  mutate(fha = sapply(js$confirmados, function(x) x$fecha)) %>%
+  mutate(Fecha = sapply(js$confirmados, function(x) x$fecha),
+         Bolivia = rowSums(.[1:9])) %>%
   `colnames<-`(c("La Paz", "Cochabamba", "Santa Cruz", "Oruro", "Potosí",
-                 "Tarija", "Chuquisaca", "Beni", "Pando", "Fecha")) %>%
+                 "Tarija", "Chuquisaca", "Beni", "Pando", "Fecha", "Bolivia")) %>%
   filter(Fecha != ultima_fecha) %>%
   pivot_longer(cols = -Fecha, names_to='Dpto', values_to='Count') %>%
   arrange(Dpto, Fecha, Count) %>% 
@@ -172,7 +174,8 @@ df <- plyr::ldply(js$confirmados, function(x) x$dep) %>%
          NumDays = max(Day)) %>%
   ungroup() %>%
   mutate(Dpto = as.factor(Dpto))
-  
+
+
 
 datos_plot <- func_preparar_datos_plot(df = df)
 datos_ref <- func_preparar_lineas_ref(df = datos_plot)
@@ -186,7 +189,8 @@ cols <- c("Beni" = "#D69C5E",
           "Pando" = "#BA53DB", 
           "Potosí" = "#C1E257", 
           "Santa Cruz" = "#CDDCAD", 
-          "Tarija" = "#80D3DC")
+          "Tarija" = "#80D3DC",
+          "Bolivia" = "black")
 
 plot_dpto_confirm <- datos_plot %>%
   ggplot(aes(Day, Count,  color= Dpto, group = Dpto, label = label)) +
@@ -205,7 +209,7 @@ plot_dpto_confirm <- datos_plot %>%
   annotate(geom = "text", x = 8, y = 80000, label = "Número de casos \nse duplica cada 1 día")+
   annotate(geom = "text", x = 21, y = 50000, label = "...cada 2 días")+
   annotate(geom = "text", x = 34, y = 40000, label = "...cada 3 días")+
-  annotate(geom = "text", x = 65, y = 10000, label = "...cada semana")+
+  annotate(geom = "text", x = 60, y = 10000, label = "...cada semana")+
   annotate(geom = "text", x = 70, y = 250, label = "...cada 2 semanas")+
   annotate(geom = "text", x = 70, y = 40, label = "...cada mes")+
   guides(color = FALSE) +
@@ -253,7 +257,10 @@ df_tiempo_dupl <- plyr::ldply(as.character(unique(datos_plot$Dpto)), function(x)
   mutate_at(vars(contains("Semana")), ~paste(., "días")) %>%
   na_if(., "NA días") %>%
   replace(is.na(.), "NA") %>%
-  replace(. == "Sin Cambio días", "Sin Cambio")
+  replace(. == "Sin Cambio días", "Sin Cambio") %>%
+  mutate(Dpto = factor(Dpto, levels = c("Bolivia", 
+                                  as.character(unique(datos_plot$Dpto))[!as.character(unique(datos_plot$Dpto)) %in% "Bolivia"]))) %>%
+  arrange(Dpto)
 
 
 
@@ -309,7 +316,18 @@ tb_dpto_doblaje_confir <- df_tiempo_dupl %>%
   ) %>%
   tab_options(
     source_notes.font.size = "10px"
-  )
+  ) %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("top", "bottom"),
+      color = "red",
+      weight = px(1.5),
+      style = "solid"
+    ),
+    locations = cells_body(
+      rows = (Dpto == "Bolivia")
+    )
+    )
 
 
 # gtsave(tb_dpto_doblaje_confir, 
@@ -329,13 +347,14 @@ tb_dpto_doblaje_confir <- df_tiempo_dupl %>%
 ########################
 
 df <- plyr::ldply(js$decesos, function(x) x$dep) %>%
-  mutate(fha = sapply(js$decesos, function(x) x$fecha)) %>%
+  mutate(Fecha = sapply(js$decesos, function(x) x$fecha),
+         Bolivia = rowSums(.[1:9])) %>%
   `colnames<-`(c("La Paz", "Cochabamba", "Santa Cruz", "Oruro", "Potosí",
-                 "Tarija", "Chuquisaca", "Beni", "Pando", "Fecha")) %>%
+                 "Tarija", "Chuquisaca", "Beni", "Pando", "Fecha", "Bolivia")) %>%
   filter(Fecha != ultima_fecha) %>%
   pivot_longer(cols = -Fecha, names_to='Dpto', values_to='Count') %>%
-  arrange(Dpto, Fecha, Count) %>%
-  filter(Count >= min_casos_pais) %>%
+  arrange(Dpto, Fecha, Count) %>% 
+  filter(Count >= min_casos_pais) %>% 
   mutate(Fecha=as.Date(Fecha)) %>%
   group_by(Dpto) %>%
   mutate(Day = row_number(),
@@ -368,7 +387,7 @@ plot_dpto_fallecidos <- datos_plot %>%
   annotate(geom = "text", x = 25, y = 1000, label = "...cada 3 días")+
   annotate(geom = "text", x = 45, y = 500, label = "...cada semana")+
   annotate(geom = "text", x = 45, y = 70, label = "...cada 2 semanas")+
-  annotate(geom = "text", x = 50, y = 30, label = "...cada mes")+
+  annotate(geom = "text", x = 55, y = 30, label = "...cada mes")+
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Décimo Deceso'),
        y = "Número de Decesos (Escala Log 10)",
@@ -396,9 +415,6 @@ plot_dpto_fallecidos <- datos_plot %>%
 #########################################################
 
 #calcular tiempo doblaje
-
-
-
 df_tiempo_dupl <- plyr::ldply(as.character(unique(datos_plot$Dpto)), function(x){
   
   sub <- datos_plot %>% filter(Dpto == x) 
@@ -415,7 +431,13 @@ df_tiempo_dupl <- plyr::ldply(as.character(unique(datos_plot$Dpto)), function(x)
   `colnames<-`(c("Dpto", "Última Semana", "Penúltima Semana", "Antepenúltima Semana", "Trasantepenúltima Semana")) %>%
   mutate_at(vars(contains("Semana")), ~paste(., "días")) %>%
   na_if(., "NA días") %>%
-  replace(is.na(.), "NA")
+  replace(is.na(.), "NA") %>%
+  replace(. == "Sin Cambio días", "Sin Cambio") %>%
+  mutate(Dpto = factor(Dpto, levels = c("Bolivia", 
+                                        as.character(unique(datos_plot$Dpto))[!as.character(unique(datos_plot$Dpto)) %in% "Bolivia"]))) %>%
+  arrange(Dpto)
+
+
 
 tb_dpto_doblaje_fallecidos <- df_tiempo_dupl %>%
   gt() %>%
@@ -469,6 +491,17 @@ tb_dpto_doblaje_fallecidos <- df_tiempo_dupl %>%
   ) %>%
   tab_options(
     source_notes.font.size = "10px"
+  ) %>%
+  tab_style(
+    style = cell_borders(
+      sides = c("top", "bottom"),
+      color = "red",
+      weight = px(1.5),
+      style = "solid"
+    ),
+    locations = cells_body(
+      rows = (Dpto == "Bolivia")
+    )
   )
 
 
