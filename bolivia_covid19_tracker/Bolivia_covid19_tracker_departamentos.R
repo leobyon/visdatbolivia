@@ -10,7 +10,7 @@ library(shinydashboard)
 library(RJSONIO)
 library(gt)
 
-
+save = FALSE
 ###############
 #funciones
 ###############
@@ -227,9 +227,11 @@ plot_dpto_confirm <- datos_plot %>%
   opts()
   
 
-
-# plot_dpto_confirm+
-#   ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_bolivia_dpto_confirmados.png", width = 25, height = 20, units = "cm")
+if (save){
+   plot_dpto_confirm+
+     ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_bolivia_dpto_confirmados.png", width = 25, height = 20, units = "cm")
+  
+}
 
   
 #########################################################
@@ -330,9 +332,12 @@ tb_dpto_doblaje_confir <- df_tiempo_dupl %>%
     )
 
 
-# gtsave(tb_dpto_doblaje_confir, 
-#        "E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_bolivia_dpto_confirmados_doblaje.png")
-# 
+if (save){
+   gtsave(tb_dpto_doblaje_confir, 
+          "E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_bolivia_dpto_confirmados_doblaje.png")
+   
+  
+}
 
 
 
@@ -403,10 +408,12 @@ plot_dpto_fallecidos <- datos_plot %>%
   opts()
 
 
+if (save){
+   plot_dpto_fallecidos+
+     ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_bolivia_dpto_fallecidos.png", width = 25, height = 20, units = "cm")
+  
+}
 
-
-# plot_dpto_fallecidos+
-#   ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_bolivia_dpto_fallecidos.png", width = 25, height = 20, units = "cm")
 
 
 
@@ -504,9 +511,11 @@ tb_dpto_doblaje_fallecidos <- df_tiempo_dupl %>%
     )
   )
 
-
-# gtsave(tb_dpto_doblaje_fallecidos, 
-#        "E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_bolivia_dpto_fallecidos_doblaje.png")
+if (save){
+   gtsave(tb_dpto_doblaje_fallecidos, 
+          "E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_bolivia_dpto_fallecidos_doblaje.png")
+  
+}
 
 
 

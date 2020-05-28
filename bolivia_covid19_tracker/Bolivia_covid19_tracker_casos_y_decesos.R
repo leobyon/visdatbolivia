@@ -10,7 +10,7 @@ library(shinydashboard)
 library(gt)
 
 
-
+save = FALSE
 
 
 ###############
@@ -286,9 +286,12 @@ plot_global_confirm <- datos_plot %>%
                           "Autor: @leo_byon"))+
   opts()
 
-# plot_global_confirm+
-#    ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_global_confirmados.png", width = 25, height = 20, units = "cm")
-# 
+if (save){
+   plot_global_confirm+
+      ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_global_confirmados.png", width = 25, height = 20, units = "cm")
+  
+}
+
 
 
 
@@ -343,8 +346,11 @@ plot_sudam_confirm <- datos_plot %>%
                           "Autor: @leo_byon"))+
   opts()
 
-# plot_sudam_confirm+
-#   ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_confirmados.png", width = 25, height = 20, units = "cm")
+if (save){
+   plot_sudam_confirm+
+     ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_confirmados.png", width = 25, height = 20, units = "cm")
+  
+}
 
 
 
@@ -437,9 +443,12 @@ tb_sudam_doblaje_confirm <- df_tiempo_dupl %>%
     source_notes.font.size = "10px"
   )
 
-# gtsave(tb_sudam_doblaje_confirm, 
-#        "E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_confirmados_doblaje.png")
-# 
+if (save) {
+   gtsave(tb_sudam_doblaje_confirm,
+          "E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_confirmados_doblaje.png")
+  
+}
+
 
 
 
@@ -536,9 +545,12 @@ plot_global_fallecidos <- datos_plot %>%
                           "Autor: @leo_byon"))+
   opts()
 
- # plot_global_fallecidos+
- #   ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_global_fallecidos.png", width = 25, height = 20, units = "cm")
- # 
+if (save){
+   plot_global_fallecidos+
+     ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_global_fallecidos.png", width = 25, height = 20, units = "cm")
+
+  
+}
 
 
 
@@ -593,8 +605,11 @@ plot_sudam_fallecidos <- datos_plot %>%
                           "Autor: @leo_byon"))+
   opts()
 
-# plot_sudam_fallecidos+
-#   ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_fallecidos.png", width = 25, height = 20, units = "cm")
+if (save) {
+  plot_sudam_fallecidos+
+    ggsave("E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_fallecidos.png", width = 25, height = 20, units = "cm")
+  
+}
 
 
 
@@ -688,7 +703,9 @@ tb_sudam_doblaje_fallecidos <- df_tiempo_dupl %>%
   )
 
 
-
-# gtsave(tb_sudam_doblaje_fallecidos, 
-#        "E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_fallecidos_doblaje.png")
-
+if (save){
+  gtsave(tb_sudam_doblaje_fallecidos,
+         "E:/github_projects/visdatbolivia/bolivia_covid19_tracker/coronavirus_sudam_fallecidos_doblaje.png")
+  
+  
+}

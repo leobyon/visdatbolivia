@@ -5,8 +5,8 @@ account: visdatbolivia
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1978703
-bundleId: 3200750
+bundleId: 3200772
 url: https://visdatbolivia.shinyapps.io/bolivia_covid19_tracker/
-when: 1590677423.79503
+when: 1590677710.05118
 asMultiple: FALSE
 asStatic: FALSE
