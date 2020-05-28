@@ -215,7 +215,7 @@ plot_dpto_confirm <- datos_plot %>%
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Décimo Caso Confirmado'),
        y = "Número de Casos Confirmados (Escala Log 10)",
-       title = "Casos Confirmados de Coronavirus en Bolivia a Nivel Departamental", 
+       title = "Casos Confirmados de Covid-19 en Bolivia a Nivel Departamental", 
        subtitle = str_glue("Número cumulativo de casos confirmados, ",
                            "por número de días desde décimo caso confirmado\n",
                            "Fecha mas reciente de actualización {ultima_fecha_dmy}"),
@@ -396,7 +396,7 @@ plot_dpto_fallecidos <- datos_plot %>%
   guides(color = FALSE) +
   labs(x = str_glue('Número de Días desde el Décimo Deceso'),
        y = "Número de Decesos (Escala Log 10)",
-       title = "Número de Decesos de Coronavirus en Bolivia a Nivel Departamental",
+       title = "Número de Decesos por Covid-19 en Bolivia a Nivel Departamental",
        subtitle = str_glue("Número cumulativo de decesos, ",
                            "por número de días desde el décimo deceso\n",
                            "Fecha mas reciente de actualización {ultima_fecha_dmy}"),
